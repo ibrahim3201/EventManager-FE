@@ -25,6 +25,7 @@ import EditNew from "./pages/EditNew";
 import { action as logoutAction } from "./pages/Logout";
 import Blogs from "./pages/Blogs";
 import BlogDetails from "./pages/BlogDetails";
+import Chat from './components/Chat';
 
 const router = createBrowserRouter([
   {
@@ -82,6 +83,7 @@ const router = createBrowserRouter([
     element: <PrivateRoute />,
     children: [
       { path: "home", element: <Home /> },
+      { path: "chat", element: <Chat /> },
       {
         path: "events",
         element: <EventsRoot />,
