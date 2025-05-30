@@ -26,6 +26,7 @@ export default function BlogDetails() {
   const [blog, setBlog] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentEmpty, setCommentEmpty] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   async function handleDelete(commentId) {
     try {
@@ -42,6 +43,7 @@ export default function BlogDetails() {
 
       if (response.ok) {
         console.log("Comment deleted successfully.");
+        getAllComments();
       } else {
         console.error("Failed to delete comment:", response.statusText);
       }
@@ -95,7 +97,10 @@ export default function BlogDetails() {
   const getAllComments = async () => {
     const data = await getComments(params.id, localStorage.getItem("token"));
     if (data) {
-      setComments(data);
+      const sortedComments = data.sort(
+        (a, b) => new Date(a.timeCommented) - new Date(b.timeCommented)
+      );
+      setComments(sortedComments);
     }
   };
 
@@ -122,6 +127,71 @@ export default function BlogDetails() {
 
     getBlogById();
   }, [params.id]);
+
+  const userId = localStorage.getItem("userId");
+
+  useEffect(() => {
+    if (blog && blog.likes) {
+      const liked = blog.likes.some((like) => like.id === userId);
+      setIsLiked(liked);
+    }
+  }, [blog, userId]);
+
+  async function handleLike() {
+    try {
+      const res = await fetch(
+        `https://localhost:7262/api/Blogs/${params.id}/like`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(localStorage.getItem("userId")),
+        }
+      );
+
+      if (res.ok) {
+        setIsLiked(true);
+        setBlog((prev) => ({
+          ...prev,
+          likes: [...prev.likes, { id: userId }],
+        }));
+      } else {
+        console.error("Failed to like the blog:", res.statusText);
+      }
+    } catch (error) {
+      console.error("Error while liking the blog:", error);
+    }
+  }
+
+  async function handleUnLike() {
+    try {
+      const res = await fetch(
+        `https://localhost:7262/api/Blogs/${params.id}/unlike`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(localStorage.getItem("userId")),
+        }
+      );
+
+      if (res.ok) {
+        setIsLiked(false);
+        setBlog((prev) => ({
+          ...prev,
+          likes: prev.likes.filter((like) => like.id !== userId),
+        }));
+      } else {
+        console.error("Failed to unlike the blog:", res.statusText);
+      }
+    } catch (error) {
+      console.error("Error while unliking the blog:", error);
+    }
+  }
 
   if (!blog) return <p align="center">Loading...</p>;
 
@@ -198,8 +268,11 @@ export default function BlogDetails() {
             }}
           >
             <h3>{blog.title}</h3>
-            {blog.content}
           </div>
+          <div
+            dangerouslySetInnerHTML={{ __html: blog.content }}
+            style={{ marginBottom: "5px" }}
+          />
           <img
             src={`https://localhost:7262/${blog.imagePath}`}
             style={{ marginBottom: "16px", width: "100%" }}
@@ -207,8 +280,12 @@ export default function BlogDetails() {
 
           {/* Actions */}
           <div style={{ display: "flex", gap: "0.75rem" }}>
-            <Button color="success" variant="contained">
-              0&nbsp; <ThumbUpAltIcon />
+            <Button
+              onClick={isLiked ? handleUnLike : handleLike}
+              color="success"
+              variant={isLiked ? "contained" : "outlined"}
+            >
+              {blog?.likes?.length || 0}&nbsp; <ThumbUpAltIcon />
             </Button>
             <Button
               color="success"
@@ -287,8 +364,9 @@ export default function BlogDetails() {
                               {comment.content}
                             </div>
                           </div>
-                          {comment.userId ===
-                            localStorage.getItem("userId") && (
+                          {(comment.userId === localStorage.getItem("userId") ||
+                            localStorage.getItem("email") ===
+                              "admin@example.com") && (
                             <div>
                               <IconButton
                                 aria-label="delete"

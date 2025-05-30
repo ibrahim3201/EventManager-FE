@@ -10,18 +10,13 @@ import Input2 from "../components/Input2";
 import CloseIcon from "@mui/icons-material/Close";
 import TextA from "../components/TextA";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 600,
-  maxHeight: "80vh",
-  overflowY: "auto",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
+function formatHtml(html) {
+  if (!html) return;
+
+  const formatted = html.replace(/></g, ">\n<").trim();
+
+  return formatted;
+}
 
 export default function Blogs() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -53,7 +48,13 @@ export default function Blogs() {
   async function fetchAndSetBlogs() {
     const data = await getBlogs();
     if (data) {
-      setBlogs(data);
+      const sortedData = data.sort((a, b) => {
+        const dateA = new Date(a.timePosted);
+        const dateB = new Date(b.timePosted);
+        return dateB - dateA;
+      });
+
+      setBlogs(sortedData);
     }
   }
 
@@ -181,6 +182,28 @@ export default function Blogs() {
     }
   }
 
+  async function handleLikeToggle(blogId, isCurrentlyLiked) {
+    console.log(blogId);
+    const url = isCurrentlyLiked
+      ? `https://localhost:7262/api/Blogs/${blogId}/unlike`
+      : `https://localhost:7262/api/Blogs/${blogId}/like`;
+
+    try {
+      await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(localStorage.getItem("userId")),
+      });
+
+      await fetchAndSetBlogs();
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  }
+
   return (
     <>
       {blogs.length === 0 && (
@@ -213,6 +236,7 @@ export default function Blogs() {
             key={blog.blogId}
             blog={blog}
             onOptionsClick={handleMenuClick}
+            onLikeToggle={handleLikeToggle}
           />
         ))}
       </div>
@@ -229,7 +253,12 @@ export default function Blogs() {
             const blogToEdit = blogs.find((b) => b.blogId === selectedBlogId);
             setEditBlogData(blogToEdit);
             setIsEditing(true);
+
+            setTitleEmpty(false);
+            setContentEmpty(false);
+            setImageEmpty(false);
             setModalOpen(true);
+
             handleMenuClose();
           }}
         >
@@ -274,7 +303,23 @@ export default function Blogs() {
         }}
       >
         <Fade in={modalOpen}>
-          <Box sx={style}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: {
+                xs: "90%", // for small screens (0px - 600px)
+                sm: 600, // for 600px and up
+              },
+              maxHeight: "80vh",
+              overflowY: "auto",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+            }}
+          >
             <div style={{ position: "fixed", right: "10px", top: "10px" }}>
               <IconButton aria-label="close" onClick={handleClose}>
                 <CloseIcon />
@@ -302,7 +347,7 @@ export default function Blogs() {
                   label="Content"
                   name="Content"
                   error={contentEmpty}
-                  defaultValue={editBlogData?.content || ""}
+                  defaultValue={formatHtml(editBlogData?.content) || ""}
                   errorText="Please fill this field"
                 />
                 <Input2

@@ -1,7 +1,7 @@
 import { Button, Typography, Divider } from "@mui/material";
 import { useNavigate, useParams, useRouteLoaderData } from "react-router-dom";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function OrgDetails() {
   const params = useParams();
@@ -54,11 +54,15 @@ export default function OrgDetails() {
               </Button>
             </div>
           )}
-  
+
           <div className="org-header">
             <div className="logo-container">
               <img
-                src={org.logoUrl ? `https://localhost:7262/${org.logoUrl}` : "/Images/emptyPhoto.png"}
+                src={
+                  org.logoUrl
+                    ? `https://localhost:7262/${org.logoUrl}`
+                    : "/Images/emptyPhoto.png"
+                }
                 alt={org.name}
                 className="org-logo"
               />
@@ -72,20 +76,23 @@ export default function OrgDetails() {
               </Typography>
             </div>
           </div>
-  
+
           <Divider className="divider" />
-  
+
           <div className="org-section">
             <Typography variant="h4" className="section-title">
               About
             </Typography>
-            <Typography variant="body1" className="org-description">
-              {org.description}
-            </Typography>
+            <Typography
+              variant="body1"
+              className="org-description"
+              component="div"
+              dangerouslySetInnerHTML={{ __html: org.description }}
+            />
           </div>
-  
+
           <Divider className="divider" />
-  
+
           <div className="org-section">
             <Typography variant="h4" className="section-title">
               Contact

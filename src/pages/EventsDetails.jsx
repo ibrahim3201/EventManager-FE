@@ -150,10 +150,17 @@ export default function EventDetails() {
   }
 
   const now = new Date();
+  const eventStart = new Date(eventData.startTime);
   const eventEnd = new Date(eventData.endTime);
 
-  const isEventEnded = now > eventEnd;
-  const status = isEventEnded ? "Ended" : "Upcoming";
+  let status = "Unknown";
+  if (now < eventStart) {
+    status = "Upcoming";
+  } else if (now >= eventStart && now <= eventEnd) {
+    status = "Ongoing";
+  } else if (now > eventEnd) {
+    status = "Ended";
+  }
 
   return (
     <div className="event-details-page">
@@ -257,7 +264,10 @@ export default function EventDetails() {
 
           <div className="event-section">
             <h2 className="section-title">Description</h2>
-            <p className="event-description">{eventData.description}</p>
+            <p
+              className="event-description"
+              dangerouslySetInnerHTML={{ __html: eventData.description }}
+            ></p>
           </div>
 
           <div className="event-section">
@@ -265,7 +275,6 @@ export default function EventDetails() {
             <OrgCard2
               key={org.organizationID}
               image={org.logoUrl}
-              description={org.description}
               to={
                 localStorage.getItem("token")
                   ? `/user/organizations/${org.organizationID}`
@@ -275,7 +284,7 @@ export default function EventDetails() {
             />
           </div>
 
-          {!isEventEnded && (
+          {status !== "Ended" && (
             <div className="event-actions">
               <Button
                 onClick={isRegistered ? handleUnregister : handleRegister}
