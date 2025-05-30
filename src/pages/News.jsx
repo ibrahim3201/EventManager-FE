@@ -15,8 +15,13 @@ export default function News() {
     async function fetchAndSetNews() {
       const data = await getNews();
       if (data) {
-        setNews(data);
-        setCurrentPage(1); // reset to first page
+        const sortedData = data.sort((a, b) => {
+          const dateA = new Date(a.updatedDate || a.createdDate);
+          const dateB = new Date(b.updatedDate || b.createdDate);
+          return dateB - dateA;
+        });
+        setNews(sortedData);
+        setCurrentPage(1);
       }
     }
 

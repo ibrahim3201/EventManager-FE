@@ -759,10 +759,10 @@ button {
   border: 2px solid #d7dc2e;
 }
 
-.org-card2-title {
+.org-card2-title > span {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #323f48;
+  color: #2e7d32;
   margin-bottom: 6px;
 }
 
@@ -954,7 +954,7 @@ button {
   margin-bottom: 20px !important;
 }
 
-.org-description {
+.org-description > div {
   line-height: 1.8 !important;
   color: #333 !important;
 }
@@ -1705,7 +1705,6 @@ button {
 
 .event-status {
   font-weight: bold;
-  margin-left: 5px;
 }
 
 .event-status.ended {

@@ -5,14 +5,10 @@ import { useState } from "react";
 import TextA from "./TextA";
 
 function formatHtml(html) {
-
-  if (!html) {
-    return;
-  }
+  if (!html) return;
 
   const formatted = html
     .replace(/></g, ">\n<")
-    .replace(/(\s*)(<[^/!][^>]*>)/g, "\t$2")
     .trim();
 
   return formatted;

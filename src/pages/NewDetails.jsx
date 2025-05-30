@@ -73,8 +73,8 @@ export default function NewDetails() {
           </Button>
         </div>
       )}
-      <h1 style={{ margin: 0 }}>{news.title}</h1>
-      <p style={{ marginTop: 0 }}>Posted {formatDate(news.createdDate)}</p>
+      <h1 style={{ margin: 0, color: 'green' }}>{news.title}</h1>
+      <p style={{ marginTop: 0, color: "rgb(150, 150, 150)" }}>Posted {formatDate(news.createdDate)}</p>
       <div style={{ width: "100%", overflow: "hidden", margin: "20px 0" }}>
         <div style={{ textAlign: "center", maxWidth: "850px", margin: "auto" }}>
           <img
@@ -87,7 +87,7 @@ export default function NewDetails() {
       <div style={{ margin: "auto", maxWidth: "850px" }}>
         <div
           dangerouslySetInnerHTML={{ __html: news.content }}
-          style={{ padding: "20px", backgroundColor: "rgb(248, 248, 248)" }}
+          style={{ padding: "20px", backgroundColor: "rgb(245, 245, 245)", fontSize: "20px", borderLeft: "6px solid green", borderRadius: "6px" }}
         />
       </div>
     </div>

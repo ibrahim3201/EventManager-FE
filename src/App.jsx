@@ -26,10 +26,12 @@ import { action as logoutAction } from "./pages/Logout";
 import Blogs from "./pages/Blogs";
 import BlogDetails from "./pages/BlogDetails";
 import Chat from './components/Chat';
+import PageNotFound from "./components/PageNotFound";
 
 const router = createBrowserRouter([
   {
     path: "/",
+    errorElement: <PageNotFound />,
     element: <WelcomeRoot />,
     children: [
       { path: "", element: <Home /> },

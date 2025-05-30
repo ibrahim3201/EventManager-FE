@@ -12,6 +12,29 @@ import {
 import { EventNote, Add } from "@mui/icons-material";
 import { getEvents } from "../utility/apiGetCalls";
 
+function sortEventsByTime(events) {
+  const now = new Date();
+
+  const upcoming = [];
+  const ongoing = [];
+  const ended = [];
+
+  events.forEach((event) => {
+    const start = new Date(event.startTime);
+    const end = new Date(event.endTime);
+
+    if (start > now) {
+      upcoming.push(event);
+    } else if (start <= now && end >= now) {
+      ongoing.push(event);
+    } else {
+      ended.push(event);
+    }
+  });
+
+  return [...ongoing, ...upcoming, ...ended];
+}
+
 export default function Events() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
@@ -33,8 +56,9 @@ export default function Events() {
     async function fetchAndSetEvents() {
       const data = await getEvents();
       if (data) {
-        setEvents(data);
-        setCurrentPage(1); // reset to first page when data updates
+        const sortedEvents = sortEventsByTime(data);
+        setEvents(sortedEvents);
+        setCurrentPage(1);
       }
     }
 
@@ -64,7 +88,8 @@ export default function Events() {
     <div className="events-page">
       <div className="events-header">
         <Typography variant="h4" component="h1" className="events-title">
-          <EventNote className="title-icon" /> Upcoming Events
+          <EventNote className="title-icon" />
+          University Events
         </Typography>
         {localStorage.getItem("email") === "admin@example.com" && (
           <Button
@@ -102,6 +127,7 @@ export default function Events() {
                 <Card
                   name={evt.name}
                   startDate={evt.startTime}
+                  endDate={evt.endTime}
                   orgId={evt.organizationID}
                 />
               </Link>

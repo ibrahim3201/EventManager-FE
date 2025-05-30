@@ -5,6 +5,16 @@ import { useEffect, useState } from "react";
 import { getOrgs } from "../utility/apiGetCalls";
 import TextA from "./TextA";
 
+function formatHtml(html) {
+  if (!html) return;
+
+  const formatted = html
+    .replace(/></g, ">\n<")
+    .trim();
+
+  return formatted;
+}
+
 export default function EventForm({ event, method }) {
   const navigate = useNavigate();
   const params = useParams();
@@ -162,7 +172,7 @@ export default function EventForm({ event, method }) {
             <TextA
               label="Description"
               name="Description"
-              defaultValue={event?.description || ""}
+              defaultValue={formatHtml(event?.description) || ""}
               error={edesempty}
               errorText="Please fill this field"
             />

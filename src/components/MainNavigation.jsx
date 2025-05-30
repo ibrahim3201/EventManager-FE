@@ -97,7 +97,7 @@ export default function Events() {
                 }}
               />
             </IconButton>
-            <img src="/Images/BAUClubs.png" alt="" width={"45px"} />
+            <img src="/Images/BAUClubs.png" alt="" width={"40px"} />
           </div>
 
           <div
@@ -107,7 +107,6 @@ export default function Events() {
               justifyContent: "center",
               maxWidth: "800px",
               minWidth: "250px",
-              margin: "0 24px",
               position: "relative",
             }}
           >
@@ -171,14 +170,6 @@ export default function Events() {
             >
               <ArticleOutlinedIcon sx={{ fontSize: 28 }} />
               <span className="link-text">News</span>
-            </NavLink>
-            <NavLink
-              to="forms"
-              onClick={handleNavClick}
-              className={({ isActive }) => (isActive ? "active" : undefined)}
-            >
-              <SummarizeOutlinedIcon sx={{ fontSize: 28 }} />
-              <span className="link-text">Forms</span>
             </NavLink>
             <NavLink
               to="blogs"

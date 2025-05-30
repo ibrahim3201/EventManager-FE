@@ -1,3 +1,14 @@
+function stripHtml(html) {
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  return tempDiv.textContent || tempDiv.innerText || "";
+}
+
+function truncateText(text, maxLength) {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + " ...";
+}
+
 export default function Carousel({ news }) {
   if (!news || news.length === 0) return null;
 
@@ -39,7 +50,7 @@ export default function Carousel({ news }) {
               style={{ objectFit: "cover" }}
               onError={(e) => {
                 e.target.onerror = null;
-                e.target.src = "https://picsum.photos/id/1015/1200/400";
+                e.target.src = "/Images/emptyPhoto.png";
               }}
             />
             <div
@@ -50,12 +61,16 @@ export default function Carousel({ news }) {
               className="carousel-caption d-none d-md-block"
             >
               <h6 style={{ color: "green" }}>{n.title}</h6>
-              <div dangerouslySetInnerHTML={{ __html: n.content }} />
+              <div style={{ color: "black" }}>
+                {truncateText(stripHtml(n.content), 300)}
+              </div>
             </div>
 
             <div className="d-block d-md-none my-5 px-3 text-center">
               <h6 style={{ color: "green" }}>{n.title}</h6>
-              <div dangerouslySetInnerHTML={{ __html: n.content }} />
+              <div style={{ color: "black" }}>
+                {truncateText(stripHtml(n.content), 300)}
+              </div>
             </div>
           </div>
         ))}
